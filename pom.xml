@@ -5,6 +5,7 @@
 
     <groupId>org.springframework.samples.petclinic.discovery</groupId>
     <artifactId>spring-petclinic-discovery-server</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <description>Spring PetClinic Discovery Server</description>
 
