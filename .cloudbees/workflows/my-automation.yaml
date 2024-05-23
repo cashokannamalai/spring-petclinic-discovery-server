@@ -22,7 +22,34 @@ jobs:
         run: |
           mvn clean install -DskipTests=true
 
-      - name: Scan with SonarQube bundled action
-        uses: cloudbees-io/sonarqube-bundled-sast-scan-code@v1
+  scan:
+    needs: ci-job
+    steps:
+      
+
+      - uses: cloudbees-io/sonarqube-sast-scan-code@v1
+        name: Scan
         kind: scan
-  
+        with:
+          server-url: https://sonarqube.cb-demos.io
+          username: admin
+          password: admin123
+          language: Java
+
+      - uses: cloudbees-io/sonarqube-bundled-sast-scan-code@v2
+        name: Scan 2
+        kind: scan
+        with:
+          language: JAVA
+
+      - uses: cloudbees-io/findsecbugs-sast-scan-code@v1
+        name: Scan with Find Security Bugs
+        kind: scan
+        with:
+          language: LANGUAGE_JAVA
+
+      - uses: sbatchelder-cba/sonarqube-cba@v0.0.3
+        name: Scan GP
+        with:
+          project-key: discovery-server
+          token: 20e414018be1508e8a472229e7ec07da1a13cfa1
