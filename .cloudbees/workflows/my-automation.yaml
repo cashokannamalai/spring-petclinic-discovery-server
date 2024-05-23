@@ -1,6 +1,6 @@
 apiVersion: automation.cloudbees.io/v1alpha1
 kind: workflow
-name: My automation
+name: discovery-server
 
 on:
   push:
@@ -8,7 +8,12 @@ on:
       - '**'
 
 jobs:
-  ci-job:
+  Checkout:
+    steps:
+      - name: checkout
+        uses: cloudbees-io/checkout@v1
+  Build:
+    needs: Checkout
     steps:
       - uses: docker://alpine/git:latest
         run: |
@@ -23,10 +28,8 @@ jobs:
           mvn clean install -DskipTests=true
 
   scan:
-    needs: ci-job
+    needs: Build
     steps:
-      
-
       - uses: cloudbees-io/sonarqube-sast-scan-code@v1
         name: Scan
         kind: scan
