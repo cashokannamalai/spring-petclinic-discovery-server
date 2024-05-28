@@ -58,7 +58,7 @@ jobs:
           token: 20e414018be1508e8a472229e7ec07da1a13cfa1
 
   NexusPublish:
-    needs: [Build]
+    needs: [SonarAnalysisan]
     steps:
       - uses: docker://alpine/git:latest
         run: |
