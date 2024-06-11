@@ -83,3 +83,41 @@ jobs:
         run: |
           echo "Current directory: $(pwd)"
           ls -lR /cloudbees/workspace
+
+
+  DeployEc2:
+    needs: NexusPublish
+    steps:
+      - uses: docker://alpine/git:latest
+        run: |
+          git config --global --add safe.directory /cloudbees/workspace
+          ls
+      - name: checkout
+        uses: cloudbees-io/checkout@v1
+
+      - name: Build
+        uses: docker://maven:3-eclipse-temurin-17
+        run: |
+          mvn clean install -DskipTests=true  
+
+      - name: List built files
+        uses: docker://alpine:latest
+        run: |
+          ls -l /cloudbees/workspace/target
+
+      - name: Deploy to EC2
+        uses: docker://alpine:latest
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          apk update
+          apk add openssh-client
+          echo "$EC2_SSH_KEY" > /cloudbees/workspace/ssh-key.pem
+          chmod 600 /cloudbees/workspace/ssh-key.pem
+          ls -l /cloudbees/workspace/target
+          
+        
+          
+          scp -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem /cloudbees/workspace/target/spring-petclinic-discovery-server-1.0.0.jar ubuntu@35.174.136.64:/home/ubuntu/petclinic
+
+           
