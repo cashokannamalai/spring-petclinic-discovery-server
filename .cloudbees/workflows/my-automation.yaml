@@ -120,4 +120,4 @@ jobs:
           
           scp -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem /cloudbees/workspace/target/spring-petclinic-discovery-server-1.0.0.jar ubuntu@35.174.136.64:/home/ubuntu/petclinic
 
-           
+        
