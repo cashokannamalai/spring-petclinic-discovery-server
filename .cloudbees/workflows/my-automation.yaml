@@ -88,11 +88,8 @@ jobs:
           echo "$EC2_SSH_KEY" > /cloudbees/workspace/ssh-key.pem
           chmod 600 /cloudbees/workspace/ssh-key.pem
           ls -l /cloudbees/workspace/target
-          
-        
-          
-          scp -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem /cloudbees/workspace/target/spring-petclinic-discovery-server-1.0.0.jar ubuntu@52.90.187.119:/home/ubuntu/petclinic
-          ssh -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem ubuntu@52.90.187.119 "nohup java -jar /home/ubuntu/petclinic/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/petclinic/discovery-server.log 2>&1 &"
+          scp -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem /cloudbees/workspace/target/spring-petclinic-discovery-server-1.0.0.jar ubuntu@54.174.48.42:/home/ubuntu/petclinic
+          ssh -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem ubuntu@54.174.48.42 "nohup java -jar /home/ubuntu/petclinic/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/petclinic/discovery-server.log 2>&1 &"
 
 
         
