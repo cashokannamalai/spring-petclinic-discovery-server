@@ -91,8 +91,8 @@ jobs:
           
         
           
-          scp -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem /cloudbees/workspace/target/spring-petclinic-discovery-server-1.0.0.jar ubuntu@34.230.59.163:/home/ubuntu/petclinic
-          ssh -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem ubuntu@34.230.59.163 "nohup java -jar /home/ubuntu/petclinic/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/petclinic/discovery-server.log 2>&1 &"
+          scp -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem /cloudbees/workspace/target/spring-petclinic-discovery-server-1.0.0.jar ubuntu@52.90.187.119:/home/ubuntu/petclinic
+          ssh -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem ubuntu@52.90.187.119 "nohup java -jar /home/ubuntu/petclinic/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/petclinic/discovery-server.log 2>&1 &"
 
 
         
