@@ -67,29 +67,30 @@ jobs:
           ls
       - name: checkout
         uses: cloudbees-io/checkout@v1
-
       - name: Build
         uses: docker://maven:3-eclipse-temurin-17
         run: |
           mvn clean install -DskipTests=true  
-
       - name: List built files
         uses: docker://alpine:latest
-        run: |
+        run: |+
           ls -l /cloudbees/workspace/target
-
+      
       - name: Deploy to EC2
         uses: docker://alpine:latest
         env:
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SOURCE: "/cloudbees/workspace/target/spring-petclinic-discovery-server-1.0.0.jar"
+          REMOTE_HOST: "44.204.64.78"
+          REMOTE_USER: "ubuntu"
+          TARGET: "/home/ubuntu/petclinic"
         run: |
           apk update
           apk add openssh-client
-          echo "$EC2_SSH_KEY" > /cloudbees/workspace/ssh-key.pem
+          echo "$SSH_PRIVATE_KEY" > /cloudbees/workspace/ssh-key.pem
           chmod 600 /cloudbees/workspace/ssh-key.pem
-          ls -l /cloudbees/workspace/target
-          scp -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem /cloudbees/workspace/target/spring-petclinic-discovery-server-1.0.0.jar ubuntu@54.174.48.42:/home/ubuntu/petclinic
-          ssh -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem ubuntu@54.174.48.42 "nohup java -jar /home/ubuntu/petclinic/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/petclinic/discovery-server.log 2>&1 &"
-
-
-        
+          scp -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem "$SOURCE" "$REMOTE_USER"@"$REMOTE_HOST":"$TARGET"
+          ssh -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem "$REMOTE_USER"@"$REMOTE_HOST" "nohup java -jar /home/ubuntu/petclinic/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/petclinic/discovery-server.log 2>&1 &"
+          ls -l /cloudbees/workspace/
+          rm -rf /cloudbees/workspace/ssh-key.pem
+          ls -l /cloudbees/workspace/
