@@ -134,5 +134,5 @@ jobs:
          apk update
          apk add openssh-client
          PUBLIC_DNS=$(cat public_dns.txt)
-         ssh -o StrictHostKeyChecking=no -i ashokpetclinic.pem ubuntu@$PUBLIC_DNS "nohup java -jar /home/ubuntu/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/discovery-server.log 2>&1 &"
+         ssh -o StrictHostKeyChecking=no -i ashokpetclinic1.pem ubuntu@$PUBLIC_DNS "nohup java -jar /home/ubuntu/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/discovery-server.log 2>&1 &"
           
