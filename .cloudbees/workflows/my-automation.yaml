@@ -124,10 +124,10 @@ jobs:
       
 
       - name: Run JAR file on EC2 instance
-        uses: docker://ubuntu:latest
+        uses: docker://alpine:latest
         run: |
-         apt-get update
-         apt-get install -y openssh-client openjdk-17-jdk
+         apk update
+         apk add openssh-client
          PUBLIC_DNS=$(cat public_dns.txt)
          ssh -o StrictHostKeyChecking=no -i ashokpetclinic.pem ubuntu@$PUBLIC_DNS "nohup java -jar /home/ubuntu/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/discovery-server.log 2>&1 &"
           
