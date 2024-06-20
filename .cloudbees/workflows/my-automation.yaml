@@ -64,33 +64,70 @@ jobs:
       - uses: docker://alpine/git:latest
         run: |
           git config --global --add safe.directory /cloudbees/workspace
-          ls
+
       - name: checkout
         uses: cloudbees-io/checkout@v1
-      - name: Build
+
+      - name: Build 
         uses: docker://maven:3-eclipse-temurin-17
         run: |
-          mvn clean install -DskipTests=true  
-      - name: List built files
-        uses: docker://alpine:latest
-        run: |+
-          ls -l /cloudbees/workspace/target
+          mvn clean install -DskipTests=true
+
+
+      - name: Configure AWS credentials
+        uses: cloudbees-io/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
       
-      - name: Deploy to EC2
+
+      - name: Create and use EC2 key pair
+        uses: docker://amazon/aws-cli:latest
+        run: |
+          aws ec2 create-key-pair --key-name ashokpetclinic1 --region us-east-1 --query 'KeyMaterial' --output text > ashokpetclinic1.pem
+          chmod 400 ashokpetclinic1.pem
+          INSTANCE_ID=$(aws ec2 run-instances --image-id ami-04b70fa74e45c3917 --instance-type t2.micro --key-name "ashokpetclinic1" --region us-east-1 --query 'Instances[0].InstanceId' --output text)
+          echo $INSTANCE_ID > instance_id.txt
+          ls
+          cat instance_id.txt
+
+      - name: Wait for EC2 instance to be running
+        uses: docker://amazon/aws-cli:latest
+        run: |
+          INSTANCE_ID=$(cat instance_id.txt)
+          aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+          PUBLIC_DNS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicDnsName' --output text)
+          echo $PUBLIC_DNS > public_dns.txt
+          cat public_dns.txt
+
+
+      - name: Wait for EC2 instance to be fully ready
         uses: docker://alpine:latest
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SOURCE: "/cloudbees/workspace/target/spring-petclinic-discovery-server-1.0.0.jar"
-          REMOTE_HOST: "44.204.64.78"
-          REMOTE_USER: "ubuntu"
-          TARGET: "/home/ubuntu/petclinic"
+        run: |
+          sleep 30
+
+    
+
+    
+
+      - name: Transfer JAR file to EC2 instance
+        uses: docker://alpine:latest
         run: |
           apk update
           apk add openssh-client
-          echo "$SSH_PRIVATE_KEY" > /cloudbees/workspace/ssh-key.pem
-          chmod 600 /cloudbees/workspace/ssh-key.pem
-          scp -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem "$SOURCE" "$REMOTE_USER"@"$REMOTE_HOST":"$TARGET"
-          ssh -o StrictHostKeyChecking=no -i /cloudbees/workspace/ssh-key.pem "$REMOTE_USER"@"$REMOTE_HOST" "nohup java -jar /home/ubuntu/petclinic/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/petclinic/discovery-server.log 2>&1 &"
-          ls -l /cloudbees/workspace/
-          rm -rf /cloudbees/workspace/ssh-key.pem
-          ls -l /cloudbees/workspace/
+          PUBLIC_DNS=$(cat public_dns.txt)
+          scp -o StrictHostKeyChecking=no -i ashokpetclinic1.pem target/spring-petclinic-discovery-server-1.0.0.jar ubuntu@$PUBLIC_DNS:/home/ubuntu/
+
+      
+
+      - name: Run JAR file on EC2 instance
+        uses: docker://ubuntu:latest
+        run: |
+         apt-get update
+         apt-get install -y openssh-client openjdk-17-jdk
+         PUBLIC_DNS=$(cat public_dns.txt)
+         ssh -o StrictHostKeyChecking=no -i ashokpetclinic.pem ubuntu@$PUBLIC_DNS "nohup java -jar /home/ubuntu/spring-petclinic-discovery-server-1.0.0.jar > /home/ubuntu/discovery-server.log 2>&1 &"
+          
