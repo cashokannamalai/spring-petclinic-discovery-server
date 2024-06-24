@@ -59,7 +59,7 @@ jobs:
 
   
   NexusPublish:
-    needs: [SonarAnalysis]
+    needs: [SonarAnalysisan]
     steps:
       - uses: docker://alpine/git:latest
         run: |
