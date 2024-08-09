@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: discovery-server-deployment
+  name: discoveryserver-deployment
   namespace: ashok
   labels:
     app: discoveryserver
