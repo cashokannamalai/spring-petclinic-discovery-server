@@ -52,7 +52,7 @@ spec:
     - host:  ""
       http:
         paths:
-          - path: /discovery
+          - path: /eureka
             pathType: Prefix
             backend:
               service:
