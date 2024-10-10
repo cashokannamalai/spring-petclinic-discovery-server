@@ -59,4 +59,5 @@ spec:
                 name: discoveryserver-service
                 port:
                   number: 8761
+                  
         
