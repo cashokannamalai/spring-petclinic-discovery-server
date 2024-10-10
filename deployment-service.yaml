@@ -52,17 +52,11 @@ spec:
     - host:  ""
       http:
         paths:
-          - path: /eureka/
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: discoveryserver-service
                 port:
                   number: 8761
-          - path: /lastn
-            pathType: Prefix
-            backend:
-              service:
-                name: discoveryserver-service
-                port:
-                  number: 8761
+        
