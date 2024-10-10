@@ -59,7 +59,7 @@ spec:
                 name: discoveryserver-service
                 port:
                   number: 8761
-          - path: /lastn/
+          - path: /lastn
             pathType: Prefix
             backend:
               service:
