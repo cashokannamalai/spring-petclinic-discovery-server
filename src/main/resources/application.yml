@@ -1,10 +1,34 @@
+spring:
+  application:
+    name: discovery-server
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888/}
 server:
   port: 8761
 
 eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
   instance:
-    hostname: discovery-server
-    
+    hostname: ${EXTERNAL_HOSTNAME}  # Placeholder for external hostname/IP
+    ip-address: ${EXTERNAL_IP}       # Placeholder for external IP
+    prefer-ip-address: true          # Use IP address instead of hostname
+
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${EXTERNAL_HOSTNAME}:${server.port}/eureka/
+
+# Avoid some debugging logs at startup
+logging:
+  level:
+    org:
+      springframework:
+        boot: INFO
+        web: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+    import: configserver:http://config-server:8888
