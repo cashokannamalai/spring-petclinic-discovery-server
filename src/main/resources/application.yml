@@ -3,6 +3,8 @@ spring:
     name: discovery-server
   config:
     import: optional:configserver:${CONFIG_SERVER_URL:http://34.172.197.153:8888/}
+    
+
 
 # Avoid some debugging logs at startup
 logging:
