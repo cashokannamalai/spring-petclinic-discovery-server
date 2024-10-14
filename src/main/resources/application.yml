@@ -2,7 +2,7 @@ spring:
   application:
     name: discovery-server
   config:
-    import: optional:configserver:${CONFIG_SERVER_URL:http://34.172.197.153:8888/}
+    import: optional:configserver:${CONFIG_SERVER_URL:http://34.123.177.155:8888/}
 ﻿server:
   port: 8761
 
