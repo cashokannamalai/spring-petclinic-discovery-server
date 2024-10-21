@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: discoveryserver-deployment
-  namespace: ashok
+  namespace: petclinic
   labels:
     app: discoveryserver
 spec:
-  replicas: 1
+  replicas: 1 
   selector:
     matchLabels:
       app: discoveryserver
@@ -17,9 +17,21 @@ spec:
     spec:
       containers:
         - name: discoveryserver
-          image: caannamalai/discovery-server:1.0.0
+          image: caannamalai/discoveryserver:1.0.0  
           ports:
-            - containerPort: 8761
+            - containerPort: 8761  
+          readinessProbe:  
+            httpGet:
+              path: /actuator/health  
+              port: 8761
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe: 
+            httpGet:
+              path: /actuator/health
+              port: 8761
+            initialDelaySeconds: 30
+            periodSeconds: 30
 
 ---
 
@@ -27,35 +39,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: discoveryserver-service
-  namespace: ashok
+  namespace: petclinic
   labels:
     app: discoveryserver
 spec:
+  type: LoadBalancer  
   selector:
     app: discoveryserver
   ports:
     - protocol: TCP
-      port: 8761
-      targetPort: 8761
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: discoveryserver-ingress
-  namespace: ashok
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-    - host:  ""
-      http:
-        paths:
-          - path: /discovery
-            pathType: Prefix
-            backend:
-              service:
-                name: discoveryserver-service
-                port:
-                  number: 8761
+      port: 8761         
+      targetPort: 8761   
+  sessionAffinity: None  
