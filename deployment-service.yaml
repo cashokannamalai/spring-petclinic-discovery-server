@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: discoveryserver-deployment
-  namespace: petclinic
+  namespace: ashok
   labels:
     app: discoveryserver
 spec:
@@ -39,7 +39,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: discoveryserver-service
-  namespace: petclinic
+  namespace: ashok
   labels:
     app: discoveryserver
 spec:
