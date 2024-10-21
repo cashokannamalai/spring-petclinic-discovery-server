@@ -2,19 +2,7 @@ spring:
   application:
     name: discovery-server
   config:
-    import: optional:configserver:${CONFIG_SERVER_URL:http://34.122.225.157:8888/}
-﻿server:
-  port: 8761
-
-eureka:
-  instance:
-    hostname: 35.239.105.95
-  # standalone mode
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
-    serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    import: optional:configserver:${CONFIG_SERVER_URL:http://34.148.165.92/config}
 
 # Avoid some debugging logs at startup
 logging:
@@ -29,4 +17,4 @@ spring:
   config:
     activate:
       on-profile: docker
-    import: configserver:http://34.122.225.157:8888/
+    import: configserver:http://34.148.165.92/config
