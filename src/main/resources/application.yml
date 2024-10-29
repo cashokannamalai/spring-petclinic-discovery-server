@@ -2,7 +2,7 @@ spring:
   application:
     name: discovery-server
   config:
-    import: optional:configserver:${CONFIG_SERVER_URL:http://34.75.71.249:8888/}
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:30080/}
 
 # Avoid some debugging logs at startup
 logging:
@@ -17,4 +17,4 @@ spring:
   config:
     activate:
       on-profile: docker
-    import: configserver:http://configserver-service:8888
+    import: configserver:http://config-server:8888
